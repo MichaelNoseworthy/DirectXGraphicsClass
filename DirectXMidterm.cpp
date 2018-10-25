@@ -427,7 +427,7 @@ void LitColumnsApp::UpdateMainPassCB(const GameTimer& gt)
 	mMainPassCB.FarZ = 1000.0f;
 	mMainPassCB.TotalTime = gt.TotalTime();
 	mMainPassCB.DeltaTime = gt.DeltaTime();
-	mMainPassCB.AmbientLight = { 0.85f, 0.85f, 0.35f, 1.0f };
+	mMainPassCB.AmbientLight = { 0.25f, 0.25f, 0.35f, 1.0f };
 	mMainPassCB.Lights[0].Direction = { 0.57735f, -0.57735f, 0.57735f };
 	mMainPassCB.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
 	mMainPassCB.Lights[1].Direction = { -0.57735f, -0.57735f, 0.57735f };
@@ -498,6 +498,7 @@ void LitColumnsApp::BuildShapeGeometry()
 	GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
 	GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(0.5f, 0.3f, 3.0f, 20, 20);
 	GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1, 1, 1, 3); /////////////////////////
+	GeometryGenerator::MeshData pyramid = geoGen.CreatePyramid( 1 ); //pyramid
 
 	//
 	// We are concatenating all the geometry into one big vertex/index buffer.  So
@@ -510,7 +511,7 @@ void LitColumnsApp::BuildShapeGeometry()
 	UINT sphereVertexOffset = gridVertexOffset + (UINT)grid.Vertices.size();
 	UINT cylinderVertexOffset = sphereVertexOffset + (UINT)sphere.Vertices.size();
 	UINT diamondVertexOffset = cylinderVertexOffset + (UINT)cylinder.Vertices.size();/////////////////
-	
+	UINT pyramidVertexOffset = diamondVertexOffset + (UINT)diamond.Vertices.size(); //pyramid
 
 	// Cache the starting index for each object in the concatenated index buffer.
 	UINT boxIndexOffset = 0;
@@ -518,6 +519,7 @@ void LitColumnsApp::BuildShapeGeometry()
 	UINT sphereIndexOffset = gridIndexOffset + (UINT)grid.Indices32.size();
 	UINT cylinderIndexOffset = sphereIndexOffset + (UINT)sphere.Indices32.size();
 	UINT diamondIndexOffset = cylinderIndexOffset + (UINT)cylinder.Indices32.size();///////////////////
+	UINT pyramidIndexOffset = diamondIndexOffset + (UINT)diamond.Indices32.size();//pyramind
 
 	SubmeshGeometry boxSubmesh;
 	boxSubmesh.IndexCount = (UINT)box.Indices32.size();
@@ -544,6 +546,11 @@ void LitColumnsApp::BuildShapeGeometry()
 	diamondSubmesh.StartIndexLocation = diamondIndexOffset;
 	diamondSubmesh.BaseVertexLocation = diamondVertexOffset;
 
+	SubmeshGeometry pyramidSubmesh;/////////////
+	pyramidSubmesh.IndexCount = (UINT)pyramid.Indices32.size();
+	pyramidSubmesh.StartIndexLocation = pyramidIndexOffset;
+	pyramidSubmesh.BaseVertexLocation = pyramidVertexOffset;
+
 	//
 	// Extract the vertex elements we are interested in and pack the
 	// vertices of all the meshes into one vertex buffer.
@@ -554,7 +561,8 @@ void LitColumnsApp::BuildShapeGeometry()
 		grid.Vertices.size() +
 		sphere.Vertices.size() +
 		cylinder.Vertices.size() +
-		diamond.Vertices.size();/////////////
+		diamond.Vertices.size() +
+		pyramid.Vertices.size();/////////////
 
 	std::vector<Vertex> vertices(totalVertexCount);
 
@@ -589,12 +597,19 @@ void LitColumnsApp::BuildShapeGeometry()
 		vertices[k].Normal = diamond.Vertices[i].Normal;
 	}
 
+	for (size_t i = 0; i < pyramid.Vertices.size(); ++i, ++k)/////////////
+	{
+		vertices[k].Pos = pyramid.Vertices[i].Position;
+		vertices[k].Normal = pyramid.Vertices[i].Normal;
+	}
+
 	std::vector<std::uint16_t> indices;
 	indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16()));
 	indices.insert(indices.end(), std::begin(grid.GetIndices16()), std::end(grid.GetIndices16()));
 	indices.insert(indices.end(), std::begin(sphere.GetIndices16()), std::end(sphere.GetIndices16()));
 	indices.insert(indices.end(), std::begin(cylinder.GetIndices16()), std::end(cylinder.GetIndices16()));
 	indices.insert(indices.end(), std::begin(diamond.GetIndices16()), std::end(diamond.GetIndices16()));
+	indices.insert(indices.end(), std::begin(pyramid.GetIndices16()), std::end(pyramid.GetIndices16()));
 
     const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
     const UINT ibByteSize = (UINT)indices.size()  * sizeof(std::uint16_t);
@@ -624,6 +639,7 @@ void LitColumnsApp::BuildShapeGeometry()
 	geo->DrawArgs["sphere"] = sphereSubmesh;
 	geo->DrawArgs["cylinder"] = cylinderSubmesh;
 	geo->DrawArgs["diamond"] = diamondSubmesh; /////////////
+	geo->DrawArgs["pyramid"] = pyramidSubmesh;
 
 	mGeometries[geo->Name] = std::move(geo);
 }
@@ -869,7 +885,19 @@ void LitColumnsApp::BuildRenderItems()
 	diamond1Ritem->BaseVertexLocation = diamond1Ritem->Geo->DrawArgs["diamond"].BaseVertexLocation;
 	mAllRitems.push_back(std::move(diamond1Ritem));
 
-	UINT objCBIndex = 5;
+	auto pyramidRitem = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&pyramidRitem->World, XMMatrixScaling(1.0f, 1.0f, 1.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(7.7f, 0.0f, 0.0f));
+	XMStoreFloat4x4(&pyramidRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+	pyramidRitem->ObjCBIndex = 5;
+	pyramidRitem->Mat = mMaterials["stone0"].get();
+	pyramidRitem->Geo = mGeometries["shapeGeo"].get();
+	pyramidRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	pyramidRitem->IndexCount = pyramidRitem->Geo->DrawArgs["pyramid"].IndexCount;
+	pyramidRitem->StartIndexLocation = pyramidRitem->Geo->DrawArgs["pyramid"].StartIndexLocation;
+	pyramidRitem->BaseVertexLocation = pyramidRitem->Geo->DrawArgs["pyramid"].BaseVertexLocation;
+	mAllRitems.push_back(std::move(pyramidRitem));
+
+	UINT objCBIndex = 6; //increment by 1 per item you add
 	for(int i = 0; i < 5; ++i)
 	{
 		auto leftCylRitem = std::make_unique<RenderItem>();

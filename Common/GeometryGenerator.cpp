@@ -749,3 +749,261 @@ GeometryGenerator::MeshData GeometryGenerator::CreateDiamond(float width, float 
 	return meshData;
 
 }
+GeometryGenerator::MeshData GeometryGenerator::CreatePyramid(uint32 numSubdivisions)
+{
+	MeshData meshData;
+
+	Vertex v[16] =
+	{
+		//	Vertex(0, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f), //0  		
+			//base
+			Vertex(0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//0
+			Vertex(0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//1
+			Vertex(-0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//2
+			Vertex(-0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//3
+			//right
+			Vertex(0.0f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//4
+			Vertex(0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//5
+			Vertex(0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//6
+			//front
+			Vertex(0.0f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//7
+			Vertex(0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//8
+			Vertex(-0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//9
+			//left
+			Vertex(0.0f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//10
+			Vertex(-0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//11
+			Vertex(-0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//12
+			//back
+			Vertex(0.0f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//13
+			Vertex(0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//14
+			Vertex(-0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)//15
+	};
+
+	meshData.Vertices.assign(&v[0], &v[16]);
+
+	uint32 i[18] = {
+		//bottom
+		0,3,1,
+		0,2,3,
+		//right
+		4,5,6,
+		//left
+		11,10,12,
+		//back
+		13,14,15,
+		//front
+		9,8,7
+	};
+
+	meshData.Indices32.assign(&i[0], &i[18]);
+
+	// Put a cap on the number of subdivisions.
+	numSubdivisions = std::min<uint32>(numSubdivisions, 6u);
+
+	for (uint32 i = 0; i < numSubdivisions; ++i)
+		Subdivide(meshData);
+
+	return meshData;
+
+}
+
+GeometryGenerator::MeshData GeometryGenerator::CreateRhombo(uint32 numSubdivisions)
+{
+	MeshData meshData;
+
+	Vertex v[24] =
+	{
+		//right top
+	Vertex(0.0f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//0
+	Vertex(0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//1
+	Vertex(0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//2
+	//front top
+	Vertex(0.0f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//3
+	Vertex(0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//4
+	Vertex(-0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//5
+	//left top
+	Vertex(0.0f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//6
+	Vertex(-0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//7
+	Vertex(-0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//8
+	//back top
+	Vertex(0.0f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//9
+	Vertex(0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//10
+	Vertex(-0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//11
+
+	//right bottom
+	Vertex(0.0f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//12
+	Vertex(0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//13
+	Vertex(0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//14
+	//front bottom
+	Vertex(0.0f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//15
+	Vertex(0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//16
+	Vertex(-0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//17
+	//left bottom
+	Vertex(0.0f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//18
+	Vertex(-0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//19
+	Vertex(-0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//20
+	//back bottom
+	Vertex(0.0f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//21
+	Vertex(0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//22
+	Vertex(-0.5f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)//23
+	};
+
+	meshData.Vertices.assign(&v[0], &v[24]);
+
+	uint32 i[24] = {
+		//right top
+		0,1,2,
+		//front top
+		3,5,4,
+		//top left
+		6,8,7,
+		//top back
+		9,10,11,
+		//right bot
+		12,14,13,
+		//front bot
+		15,16,17,
+		//left bot
+		18,19,20,
+		//back bot
+		21,23,22
+	};
+
+	meshData.Indices32.assign(&i[0], &i[24]);
+
+	// Put a cap on the number of subdivisions.
+	numSubdivisions = std::min<uint32>(numSubdivisions, 6u);
+
+	for (uint32 i = 0; i < numSubdivisions; ++i)
+		Subdivide(meshData);
+
+	return meshData;
+
+}
+
+GeometryGenerator::MeshData GeometryGenerator::CreatePrism(uint32 numSubdivisions)
+{
+	MeshData meshData;
+
+	Vertex v[8] =
+	{
+		//middle
+	Vertex(-5.f, 0.f, -8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//0
+	Vertex(-10.f, 0.f, 0.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//1
+	Vertex(10.f, 0.f, 0.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//2
+	Vertex(-5.f, 0.f, 8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//3
+	Vertex(5.f, 0.f, 8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//4
+	Vertex(5.f, 0.f, -8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//5
+	//top
+	Vertex(0.f,10.0f,0.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//6
+	//bottom
+	Vertex(0.f,-10.0f,0.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//7
+	};
+
+	meshData.Vertices.assign(&v[0], &v[8]);
+
+	uint32 i[36] = {
+		//top
+		6,5,0,
+		6,2,5,
+		6,4,2,
+		6,3,4,
+		6,1,3,
+		6,0,1,
+		//bottom
+		7,1,0,
+		7,3,1,
+		7,4,3,
+		7,2,4,
+		7,5,2,
+		7,0,5
+	};
+
+	meshData.Indices32.assign(&i[0], &i[36]);
+
+	// Put a cap on the number of subdivisions.
+	numSubdivisions = std::min<uint32>(numSubdivisions, 6u);
+
+	for (uint32 i = 0; i < numSubdivisions; ++i)
+		Subdivide(meshData);
+
+	return meshData;
+
+}
+
+GeometryGenerator::MeshData GeometryGenerator::CreateHexagon(uint32 numSubdivisions)
+{
+	MeshData meshData;
+
+	Vertex v[14] =
+	{
+		//front
+		Vertex(-5.f, 1.5f, 8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//0
+		Vertex(-5.f,-1.5f, 8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//1
+		Vertex(5.f, 1.5f, 8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//2
+		Vertex(5.f, -1.5f, 8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//3
+		 //left front
+	 Vertex(-10.f, 1.5f, 0.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//4
+	  Vertex(-10.f, -1.5f, 0.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//5
+	//right front
+	Vertex(10.f, 1.5f, 0.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//6
+	Vertex(10.f, -1.5f, 0.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//7
+	//back
+	 Vertex(-5.f, 1.5f, -8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//8
+	Vertex(-5.f,-1.5f, -8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//9
+	 Vertex(5.f, 1.5f, -8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//10
+	 Vertex(5.f, -1.5f, -8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//11
+	//top
+	Vertex(0.f,1.5f,0.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//12
+	 //bottom
+	 Vertex(0.f,-1.5f,0.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)//13
+	};
+
+	meshData.Vertices.assign(&v[0], &v[14]);
+
+	uint32 i[72] = {
+		//front
+		0, 1, 2,
+		2, 1, 3,
+		//left front
+		4,5,0,
+		0,5,1,
+		//back left
+		8,9,4,
+		4,9,5,
+		//front right
+		2,3,6,
+		6,3,7,
+		//back right
+		6,7,10,
+		10,7,11,
+		//back
+		10,11,8,
+		8,11,9,
+		//top
+		12,8,4,
+		0,12,4,
+		12,0,2,
+		2,6,12,
+		12,6,10,
+		12,10,8,
+		//bottom
+		13,5,9,
+		13,9,11,
+		13,11,7,
+		13,7,3,
+		13,3,1,
+		13,1,5
+	};
+
+	meshData.Indices32.assign(&i[0], &i[72]);
+
+	// Put a cap on the number of subdivisions.
+	numSubdivisions = std::min<uint32>(numSubdivisions, 6u);
+
+	for (uint32 i = 0; i < numSubdivisions; ++i)
+		Subdivide(meshData);
+
+	return meshData;
+
+}
