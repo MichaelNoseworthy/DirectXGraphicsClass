@@ -497,8 +497,13 @@ void LitColumnsApp::BuildShapeGeometry()
 	GeometryGenerator::MeshData grid = geoGen.CreateGrid(20.0f, 30.0f, 60, 40);
 	GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
 	GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(0.5f, 0.3f, 3.0f, 20, 20);
-	GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1, 1, 1, 3); /////////////////////////
+	GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1, 1, 1, 3); /////////////////////////  ///1
 	GeometryGenerator::MeshData pyramid = geoGen.CreatePyramid( 1 ); //pyramid
+	GeometryGenerator::MeshData rhombo = geoGen.CreateRhombo(1); //rhombo
+	GeometryGenerator::MeshData prism = geoGen.CreatePrism(1); //prism
+	GeometryGenerator::MeshData hexagon = geoGen.CreateHexagon(1); //hexagon
+	GeometryGenerator::MeshData triangleEq = geoGen.CreateTriangleEq(1); //TriangleEq
+	GeometryGenerator::MeshData triangleRectSqr = geoGen.CreateTriangleRectSqr(1); //triangleRectSqr
 
 	//
 	// We are concatenating all the geometry into one big vertex/index buffer.  So
@@ -510,16 +515,26 @@ void LitColumnsApp::BuildShapeGeometry()
 	UINT gridVertexOffset = (UINT)box.Vertices.size();
 	UINT sphereVertexOffset = gridVertexOffset + (UINT)grid.Vertices.size();
 	UINT cylinderVertexOffset = sphereVertexOffset + (UINT)sphere.Vertices.size();
-	UINT diamondVertexOffset = cylinderVertexOffset + (UINT)cylinder.Vertices.size();/////////////////
+	UINT diamondVertexOffset = cylinderVertexOffset + (UINT)cylinder.Vertices.size();///////////////// //2
 	UINT pyramidVertexOffset = diamondVertexOffset + (UINT)diamond.Vertices.size(); //pyramid
+	UINT rhomboVertexOffset = pyramidVertexOffset + (UINT)pyramid.Vertices.size(); //rhombo
+	UINT prismVertexOffset = rhomboVertexOffset + (UINT)rhombo.Vertices.size();
+	UINT hexagonVertexOffset = prismVertexOffset + (UINT)prism.Vertices.size();
+	UINT triangleEqVertexOffset = hexagonVertexOffset + (UINT)hexagon.Vertices.size();//TriangleEq
+	UINT triangleRectSqrVertexOffset = triangleEqVertexOffset + (UINT)triangleEq.Vertices.size();	//triangleRectSqr
 
 	// Cache the starting index for each object in the concatenated index buffer.
 	UINT boxIndexOffset = 0;
 	UINT gridIndexOffset = (UINT)box.Indices32.size();
 	UINT sphereIndexOffset = gridIndexOffset + (UINT)grid.Indices32.size();
 	UINT cylinderIndexOffset = sphereIndexOffset + (UINT)sphere.Indices32.size();
-	UINT diamondIndexOffset = cylinderIndexOffset + (UINT)cylinder.Indices32.size();///////////////////
+	UINT diamondIndexOffset = cylinderIndexOffset + (UINT)cylinder.Indices32.size();/////////////////// //3
 	UINT pyramidIndexOffset = diamondIndexOffset + (UINT)diamond.Indices32.size();//pyramind
+	UINT rhomboIndexOffset = pyramidIndexOffset + (UINT)pyramid.Indices32.size();//rhombo
+	UINT prismIndexOffset = rhomboIndexOffset + (UINT)rhombo.Indices32.size();//prism
+	UINT hexagonIndexOffset = prismIndexOffset + (UINT)prism.Indices32.size();//hexagon
+	UINT triangleEqIndexOffset = hexagonIndexOffset + (UINT)hexagon.Indices32.size();//TriangleEq
+	UINT triangleRectSqrIndexOffset = triangleEqIndexOffset + (UINT)triangleEq.Indices32.size();//triangleRectSqr
 
 	SubmeshGeometry boxSubmesh;
 	boxSubmesh.IndexCount = (UINT)box.Indices32.size();
@@ -541,7 +556,7 @@ void LitColumnsApp::BuildShapeGeometry()
 	cylinderSubmesh.StartIndexLocation = cylinderIndexOffset;
 	cylinderSubmesh.BaseVertexLocation = cylinderVertexOffset;
 
-	SubmeshGeometry diamondSubmesh;/////////////
+	SubmeshGeometry diamondSubmesh;///////////// //4
 	diamondSubmesh.IndexCount = (UINT)diamond.Indices32.size();
 	diamondSubmesh.StartIndexLocation = diamondIndexOffset;
 	diamondSubmesh.BaseVertexLocation = diamondVertexOffset;
@@ -550,6 +565,31 @@ void LitColumnsApp::BuildShapeGeometry()
 	pyramidSubmesh.IndexCount = (UINT)pyramid.Indices32.size();
 	pyramidSubmesh.StartIndexLocation = pyramidIndexOffset;
 	pyramidSubmesh.BaseVertexLocation = pyramidVertexOffset;
+
+	SubmeshGeometry rhomboSubmesh;///////////// rhombo
+	rhomboSubmesh.IndexCount = (UINT)rhombo.Indices32.size();
+	rhomboSubmesh.StartIndexLocation = rhomboIndexOffset;
+	rhomboSubmesh.BaseVertexLocation = rhomboVertexOffset;
+
+	SubmeshGeometry prismSubmesh;///////////// prism
+	prismSubmesh.IndexCount = (UINT)prism.Indices32.size();
+	prismSubmesh.StartIndexLocation = prismIndexOffset;
+	prismSubmesh.BaseVertexLocation = prismVertexOffset;
+
+	SubmeshGeometry hexagonSubmesh;///////////// hexagon
+	hexagonSubmesh.IndexCount = (UINT)hexagon.Indices32.size();
+	hexagonSubmesh.StartIndexLocation = hexagonIndexOffset;
+	hexagonSubmesh.BaseVertexLocation = hexagonVertexOffset;
+
+	SubmeshGeometry triangleEqSubmesh;///////////// TriangleEq
+	triangleEqSubmesh.IndexCount = (UINT)triangleEq.Indices32.size();
+	triangleEqSubmesh.StartIndexLocation = triangleEqIndexOffset;
+	triangleEqSubmesh.BaseVertexLocation = triangleEqVertexOffset;
+
+	SubmeshGeometry triangleRectSqrSubmesh;//triangleRectSqr
+	triangleRectSqrSubmesh.IndexCount = (UINT)triangleRectSqr.Indices32.size();
+	triangleRectSqrSubmesh.StartIndexLocation = triangleRectSqrIndexOffset;
+	triangleRectSqrSubmesh.BaseVertexLocation = triangleRectSqrVertexOffset;
 
 	//
 	// Extract the vertex elements we are interested in and pack the
@@ -562,7 +602,12 @@ void LitColumnsApp::BuildShapeGeometry()
 		sphere.Vertices.size() +
 		cylinder.Vertices.size() +
 		diamond.Vertices.size() +
-		pyramid.Vertices.size();/////////////
+		pyramid.Vertices.size() +///////////// //5
+		rhombo.Vertices.size() +//rhombo
+		prism.Vertices.size() + //prism
+		hexagon.Vertices.size() +  //hexagon
+		triangleEq.Vertices.size() + //TriangleEq
+		triangleRectSqr.Vertices.size();
 
 	std::vector<Vertex> vertices(totalVertexCount);
 
@@ -591,7 +636,7 @@ void LitColumnsApp::BuildShapeGeometry()
 		vertices[k].Normal = cylinder.Vertices[i].Normal;
 	}
 
-	for (size_t i = 0; i < diamond.Vertices.size(); ++i, ++k)/////////////
+	for (size_t i = 0; i < diamond.Vertices.size(); ++i, ++k)///////////// //6
 	{
 		vertices[k].Pos = diamond.Vertices[i].Position;
 		vertices[k].Normal = diamond.Vertices[i].Normal;
@@ -603,6 +648,36 @@ void LitColumnsApp::BuildShapeGeometry()
 		vertices[k].Normal = pyramid.Vertices[i].Normal;
 	}
 
+	for (size_t i = 0; i < rhombo.Vertices.size(); ++i, ++k)/////////////
+	{
+		vertices[k].Pos = rhombo.Vertices[i].Position;
+		vertices[k].Normal = rhombo.Vertices[i].Normal;
+	}
+
+	for (size_t i = 0; i < prism.Vertices.size(); ++i, ++k)/////////////
+	{
+		vertices[k].Pos = prism.Vertices[i].Position;
+		vertices[k].Normal = prism.Vertices[i].Normal;
+	}
+
+	for (size_t i = 0; i < hexagon.Vertices.size(); ++i, ++k)/////////////
+	{
+		vertices[k].Pos = hexagon.Vertices[i].Position;
+		vertices[k].Normal = hexagon.Vertices[i].Normal;
+	}
+
+	for (size_t i = 0; i < triangleEq.Vertices.size(); ++i, ++k)/////////////
+	{
+		vertices[k].Pos = triangleEq.Vertices[i].Position;
+		vertices[k].Normal = triangleEq.Vertices[i].Normal;
+	}	
+
+	for (size_t i = 0; i < triangleRectSqr.Vertices.size(); ++i, ++k)/////////////
+	{
+		vertices[k].Pos = triangleRectSqr.Vertices[i].Position;
+		vertices[k].Normal = triangleRectSqr.Vertices[i].Normal;
+	}
+
 	std::vector<std::uint16_t> indices;
 	indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16()));
 	indices.insert(indices.end(), std::begin(grid.GetIndices16()), std::end(grid.GetIndices16()));
@@ -610,6 +685,11 @@ void LitColumnsApp::BuildShapeGeometry()
 	indices.insert(indices.end(), std::begin(cylinder.GetIndices16()), std::end(cylinder.GetIndices16()));
 	indices.insert(indices.end(), std::begin(diamond.GetIndices16()), std::end(diamond.GetIndices16()));
 	indices.insert(indices.end(), std::begin(pyramid.GetIndices16()), std::end(pyramid.GetIndices16()));
+	indices.insert(indices.end(), std::begin(rhombo.GetIndices16()), std::end(rhombo.GetIndices16()));///////////// //7
+	indices.insert(indices.end(), std::begin(prism.GetIndices16()), std::end(prism.GetIndices16()));
+	indices.insert(indices.end(), std::begin(hexagon.GetIndices16()), std::end(hexagon.GetIndices16()));
+	indices.insert(indices.end(), std::begin(triangleEq.GetIndices16()), std::end(triangleEq.GetIndices16())); 
+	indices.insert(indices.end(), std::begin(triangleRectSqr.GetIndices16()), std::end(triangleRectSqr.GetIndices16()));
 
     const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
     const UINT ibByteSize = (UINT)indices.size()  * sizeof(std::uint16_t);
@@ -638,8 +718,13 @@ void LitColumnsApp::BuildShapeGeometry()
 	geo->DrawArgs["grid"] = gridSubmesh;
 	geo->DrawArgs["sphere"] = sphereSubmesh;
 	geo->DrawArgs["cylinder"] = cylinderSubmesh;
-	geo->DrawArgs["diamond"] = diamondSubmesh; /////////////
+	geo->DrawArgs["diamond"] = diamondSubmesh; ///////////// //8
 	geo->DrawArgs["pyramid"] = pyramidSubmesh;
+	geo->DrawArgs["rhombo"] = rhomboSubmesh;
+	geo->DrawArgs["prism"] = prismSubmesh;
+	geo->DrawArgs["hexagon"] = hexagonSubmesh;
+	geo->DrawArgs["triangleEq"] = triangleEqSubmesh;
+	geo->DrawArgs["triangleRectSqr"] = triangleRectSqrSubmesh;	
 
 	mGeometries[geo->Name] = std::move(geo);
 }
@@ -885,8 +970,8 @@ void LitColumnsApp::BuildRenderItems()
 	diamond1Ritem->BaseVertexLocation = diamond1Ritem->Geo->DrawArgs["diamond"].BaseVertexLocation;
 	mAllRitems.push_back(std::move(diamond1Ritem));
 
-	auto pyramidRitem = std::make_unique<RenderItem>();
-	XMStoreFloat4x4(&pyramidRitem->World, XMMatrixScaling(1.0f, 1.0f, 1.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(7.7f, 0.0f, 0.0f));
+	auto pyramidRitem = std::make_unique<RenderItem>(); //9
+	XMStoreFloat4x4(&pyramidRitem->World, XMMatrixScaling(1.0f, 1.0f, 1.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(5.7f, 2.0f, 0.0f));
 	XMStoreFloat4x4(&pyramidRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 	pyramidRitem->ObjCBIndex = 5;
 	pyramidRitem->Mat = mMaterials["stone0"].get();
@@ -897,7 +982,69 @@ void LitColumnsApp::BuildRenderItems()
 	pyramidRitem->BaseVertexLocation = pyramidRitem->Geo->DrawArgs["pyramid"].BaseVertexLocation;
 	mAllRitems.push_back(std::move(pyramidRitem));
 
-	UINT objCBIndex = 6; //increment by 1 per item you add
+	auto rhomboRitem = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&rhomboRitem->World, XMMatrixScaling(1.0f, 1.0f, 1.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(3.7f, 3.0f, 0.0f));
+	XMStoreFloat4x4(&rhomboRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+	rhomboRitem->ObjCBIndex = 6; //10
+	rhomboRitem->Mat = mMaterials["stone0"].get();
+	rhomboRitem->Geo = mGeometries["shapeGeo"].get();
+	rhomboRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	rhomboRitem->IndexCount = rhomboRitem->Geo->DrawArgs["rhombo"].IndexCount;
+	rhomboRitem->StartIndexLocation = rhomboRitem->Geo->DrawArgs["rhombo"].StartIndexLocation;
+	rhomboRitem->BaseVertexLocation = rhomboRitem->Geo->DrawArgs["rhombo"].BaseVertexLocation;
+	mAllRitems.push_back(std::move(rhomboRitem));
+
+	auto prismRitem = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&prismRitem->World, XMMatrixScaling(0.1f, 0.2f, 0.1f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(0.7f, 3.0f, 5.0f));
+	XMStoreFloat4x4(&prismRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+	prismRitem->ObjCBIndex = 7; //10
+	prismRitem->Mat = mMaterials["skullMat"].get();
+	prismRitem->Geo = mGeometries["shapeGeo"].get();
+	prismRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	prismRitem->IndexCount = prismRitem->Geo->DrawArgs["prism"].IndexCount;
+	prismRitem->StartIndexLocation = prismRitem->Geo->DrawArgs["prism"].StartIndexLocation;
+	prismRitem->BaseVertexLocation = prismRitem->Geo->DrawArgs["prism"].BaseVertexLocation;
+	mAllRitems.push_back(std::move(prismRitem));
+
+	auto hexagonRitem = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&hexagonRitem->World, XMMatrixScaling(0.1f, 0.2f, 0.1f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(2.7f, 3.0f, 5.0f));
+	XMStoreFloat4x4(&hexagonRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+	hexagonRitem->ObjCBIndex = 8; //10
+	hexagonRitem->Mat = mMaterials["skullMat"].get();
+	hexagonRitem->Geo = mGeometries["shapeGeo"].get();
+	hexagonRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	hexagonRitem->IndexCount = hexagonRitem->Geo->DrawArgs["hexagon"].IndexCount;
+	hexagonRitem->StartIndexLocation = hexagonRitem->Geo->DrawArgs["hexagon"].StartIndexLocation;
+	hexagonRitem->BaseVertexLocation = hexagonRitem->Geo->DrawArgs["hexagon"].BaseVertexLocation;
+	mAllRitems.push_back(std::move(hexagonRitem));
+
+	auto triangleEqRitem = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&triangleEqRitem->World, XMMatrixScaling(1.0f, 1.0f, 1.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(0.7f, 3.0f, -2.0f));
+	XMStoreFloat4x4(&triangleEqRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+	triangleEqRitem->ObjCBIndex = 9; //10
+	triangleEqRitem->Mat = mMaterials["skullMat"].get();
+	triangleEqRitem->Geo = mGeometries["shapeGeo"].get();
+	triangleEqRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	triangleEqRitem->IndexCount = triangleEqRitem->Geo->DrawArgs["triangleEq"].IndexCount;
+	triangleEqRitem->StartIndexLocation = triangleEqRitem->Geo->DrawArgs["triangleEq"].StartIndexLocation;
+	triangleEqRitem->BaseVertexLocation = triangleEqRitem->Geo->DrawArgs["triangleEq"].BaseVertexLocation;
+	mAllRitems.push_back(std::move(triangleEqRitem));
+
+	auto triangleRectSqrRitem = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&triangleRectSqrRitem->World, XMMatrixScaling(1.0f, 1.0f, 1.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(3.7f, 3.0f, -2.0f));
+	XMStoreFloat4x4(&triangleRectSqrRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+	triangleRectSqrRitem->ObjCBIndex = 10; //10
+	triangleRectSqrRitem->Mat = mMaterials["skullMat"].get();
+	triangleRectSqrRitem->Geo = mGeometries["shapeGeo"].get();
+	triangleRectSqrRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	triangleRectSqrRitem->IndexCount = triangleRectSqrRitem->Geo->DrawArgs["triangleRectSqr"].IndexCount;
+	triangleRectSqrRitem->StartIndexLocation = triangleRectSqrRitem->Geo->DrawArgs["triangleRectSqr"].StartIndexLocation;
+	triangleRectSqrRitem->BaseVertexLocation = triangleRectSqrRitem->Geo->DrawArgs["triangleRectSqr"].BaseVertexLocation;
+	mAllRitems.push_back(std::move(triangleRectSqrRitem));	
+
+	
+	UINT objCBIndex = 11; //increment by 1 per item you add //11
+
 	for(int i = 0; i < 5; ++i)
 	{
 		auto leftCylRitem = std::make_unique<RenderItem>();
