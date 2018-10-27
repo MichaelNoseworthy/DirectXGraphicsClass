@@ -749,6 +749,7 @@ GeometryGenerator::MeshData GeometryGenerator::CreateDiamond(float width, float 
 	return meshData;
 
 }
+
 GeometryGenerator::MeshData GeometryGenerator::CreatePyramid(uint32 numSubdivisions)
 {
 	MeshData meshData;
@@ -1007,3 +1008,164 @@ GeometryGenerator::MeshData GeometryGenerator::CreateHexagon(uint32 numSubdivisi
 	return meshData;
 
 }
+
+GeometryGenerator::MeshData GeometryGenerator::CreateTriangleEq(uint32 numSubdivisions)
+{
+	MeshData meshData;
+
+	Vertex v[24] =
+	{
+		//front
+		//Vertex(-5.f, 1.5f, 8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//0//
+	Vertex(-0.6,-0.6f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//0
+	Vertex(0.6,-0.6f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//1
+	Vertex(0.f,0.6f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//2
+
+	//right top
+	Vertex(0.f,0.6f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//3
+	Vertex(0.6f,-0.6f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//4
+	Vertex(0.0,0.6f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//5
+
+	//right botton
+	Vertex(0.6,-0.6f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//6
+	Vertex(0.0,0.6f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//7
+	Vertex(0.6f,-0.6f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//8
+
+	//back
+	Vertex(-0.6f,-0.6f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//9
+	Vertex(0.6f,-0.6f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//10
+	Vertex(0.0, 0.6f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//11
+
+	//left top
+	Vertex(0.0, 0.6f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//12
+	Vertex(-0.6f,-0.6f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//13
+	Vertex(0.f,0.6f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//14
+
+	//left bottom
+	Vertex(0.f,0.6f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//15
+	Vertex(-0.6,-0.6f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//16
+	Vertex(-0.6f,-0.6f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//17
+
+	//bottom right
+	Vertex(-0.6,-0.6f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//18
+	Vertex(0.6,-0.6f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//19
+	Vertex(0.6,-0.6f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//20
+
+	//bottom left
+	Vertex(-0.6,-0.6f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//21
+	Vertex(0.6,-0.6f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//22
+	Vertex(-0.6,-0.6f, 1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)//23
+	};
+
+	meshData.Vertices.assign(&v[0], &v[24]);
+
+	uint32 i[24] = {
+		//front
+		2,0,1,
+		//rt
+		5,3,4,
+		//rb
+		7,6,8,
+		//back
+		11,10,9,
+		//lt
+		14,12,13,
+		//lb
+		15,17,16,
+		//bol
+		20,19,18,
+		//bor
+		22,23,21
+	};
+
+	meshData.Indices32.assign(&i[0], &i[24]);
+
+	// Put a cap on the number of subdivisions.
+	numSubdivisions = std::min<uint32>(numSubdivisions, 6u);
+
+	for (uint32 i = 0; i < numSubdivisions; ++i)
+		Subdivide(meshData);
+
+	return meshData;
+
+}
+
+GeometryGenerator::MeshData GeometryGenerator::CreateTriangleRectSqr(uint32 numSubdivisions)
+{
+	MeshData meshData;
+
+	Vertex v[24] =
+	{
+		//Vertex(-5.f, 1.5f, 8.66f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//0//
+		//front
+		Vertex(-0.6,-0.6f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//0
+		Vertex(0.6,-0.6f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//1
+		Vertex(0.6,0.6f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//2
+		//right top
+		Vertex(0.6f,0.6f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//3
+		Vertex(0.6f,-0.6f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//4
+		Vertex(0.6f,0.6f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//5
+		//right botton
+		Vertex(0.6,-0.6f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//6
+		Vertex(0.6f, 0.6f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//7
+		Vertex(0.6f,-0.6f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//8
+		//back
+		Vertex(-0.6,-0.6f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//9
+		Vertex(0.6,-0.6f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//10
+		Vertex(0.6,0.6f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//11
+
+		//left top
+		Vertex(0.6,0.6f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//12
+		Vertex(-0.6,-0.6f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//13
+		Vertex(0.6,0.6f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//14
+
+		//left bottom
+		Vertex(0.6,0.6f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//15
+		Vertex(-0.6,-0.6f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//16
+		Vertex(-0.6,-0.6f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//17
+
+		//bottom right
+		Vertex(-0.6,-0.6f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//18
+		Vertex(0.6,-0.6f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//19
+		Vertex(0.6,-0.6f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//20
+
+		//bottom left
+		Vertex(-0.6,-0.6f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//21
+		Vertex(0.6,-0.6f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f),//22
+		Vertex(-0.6,-0.6f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)//23
+	};
+
+	meshData.Vertices.assign(&v[0], &v[24]);
+
+	uint32 i[24] = {
+		//front
+		2,0,1,
+		//rt
+		5,3,4,
+		//rb
+		7,6,8,
+		//back
+		11,10,9,
+		//lt
+		14,12,13,
+		//lb
+		15,17,16,
+		//bol
+		20,19,18,
+		//bor
+		22,23,21
+	};
+
+	meshData.Indices32.assign(&i[0], &i[24]);
+
+	// Put a cap on the number of subdivisions.
+	numSubdivisions = std::min<uint32>(numSubdivisions, 6u);
+
+	for (uint32 i = 0; i < numSubdivisions; ++i)
+		Subdivide(meshData);
+
+	return meshData;
+
+}
+
+
