@@ -117,8 +117,8 @@ public:
 	MeshData CreateRhombo(uint32 numSubdivisions);
 	MeshData CreatePrism(uint32 numSubdivisions);
 	MeshData CreateHexagon(uint32 numSubdivisions);
-	MeshData CreateTriangleEq(uint32 numSubdivisions);
-	MeshData CreateTriangleRectSqr(uint32 numSubdivisions);
+	MeshData CreateTriangleEq(uint32 numSubdivisions);  //triangle equalateris
+	MeshData CreateTriangleRectSqr(uint32 numSubdivisions);// right angle triangle
 
 private:
 	void Subdivide(MeshData& meshData);
