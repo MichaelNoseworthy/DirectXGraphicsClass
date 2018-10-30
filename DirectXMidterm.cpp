@@ -892,9 +892,42 @@ void LitColumnsApp::BuildMaterials()
 	eye1->Name = "eye1";
 	eye1->MatCBIndex = 5;
 	eye1->DiffuseSrvHeapIndex = 5;
-	eye1->DiffuseAlbedo = XMFLOAT4(Colors::Red);
+	eye1->DiffuseAlbedo = XMFLOAT4(Colors::Black);
 	eye1->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
 	eye1->Roughness = 0.3f;
+
+	auto sun = std::make_unique<Material>();
+	sun->Name = "sun";
+	sun->MatCBIndex = 6;
+	sun->DiffuseSrvHeapIndex = 5;
+	sun->DiffuseAlbedo = XMFLOAT4(Colors::Yellow);
+	sun->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+	sun->Roughness = 0.3f;
+
+	auto red = std::make_unique<Material>();
+	red->Name = "red";
+	red->MatCBIndex = 7;
+	red->DiffuseSrvHeapIndex = 7;
+	red->DiffuseAlbedo = XMFLOAT4(Colors::Red);
+	red->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+	red->Roughness = 0.3f;
+
+	auto hex = std::make_unique<Material>();
+	hex->Name = "hex";
+	hex->MatCBIndex = 8;
+	hex->DiffuseSrvHeapIndex = 8;
+	hex->DiffuseAlbedo = XMFLOAT4(Colors::Orange);
+	hex->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+	hex->Roughness = 0.3f;
+
+	auto trianglepurple = std::make_unique<Material>();
+	trianglepurple->Name = "trianglepurple";
+	trianglepurple->MatCBIndex = 9;
+	trianglepurple->DiffuseSrvHeapIndex = 9;
+	trianglepurple->DiffuseAlbedo = XMFLOAT4(Colors::Purple);
+	trianglepurple->FresnelR0 = XMFLOAT3(0.05f, 0.05f, 0.05f);
+	trianglepurple->Roughness = 0.3f;
+
 	
 	mMaterials["bricks0"] = std::move(bricks0);
 	mMaterials["stone0"] = std::move(stone0);
@@ -902,6 +935,11 @@ void LitColumnsApp::BuildMaterials()
 	mMaterials["skullMat"] = std::move(skullMat);
 	mMaterials["eye0"] = std::move(eye0);
 	mMaterials["eye1"] = std::move(eye1);
+
+	mMaterials["sun"] = std::move(sun);
+	mMaterials["red"] = std::move(red);
+	mMaterials["hex"] = std::move(hex);
+	mMaterials["trianglepurple"] = std::move(trianglepurple);
 
 	
 }
@@ -950,7 +988,7 @@ void LitColumnsApp::BuildRenderItems()
 	XMStoreFloat4x4(&diamondRitem->World, XMMatrixScaling(5.0f, 5.0f, 5.0f) * XMMatrixRotationX(5.1) * XMMatrixTranslation(-0.7f, 15.9f, -0.6f));
 	XMStoreFloat4x4(&diamondRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 	diamondRitem->ObjCBIndex = 3;
-	diamondRitem->Mat = mMaterials["eye0"].get();
+	diamondRitem->Mat = mMaterials["eye1"].get();
 	diamondRitem->Geo = mGeometries["shapeGeo"].get();
 	diamondRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	diamondRitem->IndexCount = diamondRitem->Geo->DrawArgs["diamond"].IndexCount;
@@ -974,7 +1012,7 @@ void LitColumnsApp::BuildRenderItems()
 	XMStoreFloat4x4(&pyramidRitem->World, XMMatrixScaling(4.0f, 4.0f, 4.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(15.0f, 18.0f, -15.0f));
 	XMStoreFloat4x4(&pyramidRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 	pyramidRitem->ObjCBIndex = 5;
-	pyramidRitem->Mat = mMaterials["stone0"].get();
+	pyramidRitem->Mat = mMaterials["red"].get();
 	pyramidRitem->Geo = mGeometries["shapeGeo"].get();
 	pyramidRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	pyramidRitem->IndexCount = pyramidRitem->Geo->DrawArgs["pyramid"].IndexCount;
@@ -986,7 +1024,7 @@ void LitColumnsApp::BuildRenderItems()
 	XMStoreFloat4x4(&rhomboRitem->World, XMMatrixScaling(1.0f, 1.0f, 1.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(6.7f, 8.0f, -17.0f));
 	XMStoreFloat4x4(&rhomboRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 	rhomboRitem->ObjCBIndex = 6; //10
-	rhomboRitem->Mat = mMaterials["stone0"].get();
+	rhomboRitem->Mat = mMaterials["eye0"].get();
 	rhomboRitem->Geo = mGeometries["shapeGeo"].get();
 	rhomboRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	rhomboRitem->IndexCount = rhomboRitem->Geo->DrawArgs["rhombo"].IndexCount;
@@ -994,24 +1032,26 @@ void LitColumnsApp::BuildRenderItems()
 	rhomboRitem->BaseVertexLocation = rhomboRitem->Geo->DrawArgs["rhombo"].BaseVertexLocation;
 	mAllRitems.push_back(std::move(rhomboRitem));
 
+	
 
-	auto prismRitem = std::make_unique<RenderItem>();
-	XMStoreFloat4x4(&prismRitem->World, XMMatrixScaling(0.1f, 0.2f, 0.1f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(-20.7f, 40.0f, 35.0f));
-	XMStoreFloat4x4(&prismRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
-	prismRitem->ObjCBIndex = 7; //10
-	prismRitem->Mat = mMaterials["skullMat"].get();
-	prismRitem->Geo = mGeometries["shapeGeo"].get();
-	prismRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	prismRitem->IndexCount = prismRitem->Geo->DrawArgs["prism"].IndexCount;
-	prismRitem->StartIndexLocation = prismRitem->Geo->DrawArgs["prism"].StartIndexLocation;
-	prismRitem->BaseVertexLocation = prismRitem->Geo->DrawArgs["prism"].BaseVertexLocation;
-	mAllRitems.push_back(std::move(prismRitem));
+	auto sphereRitem = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&sphereRitem->World, XMMatrixScaling(3.0f, 3.0f, 3.0f) * XMMatrixTranslation(-20.7f, 40.0f, 35.0f));
+	XMStoreFloat4x4(&sphereRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+	sphereRitem->ObjCBIndex = 7; //10
+	sphereRitem->Mat = mMaterials["sun"].get();
+	sphereRitem->Geo = mGeometries["shapeGeo"].get();
+	sphereRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	sphereRitem->IndexCount = sphereRitem->Geo->DrawArgs["sphere"].IndexCount;
+	sphereRitem->StartIndexLocation = sphereRitem->Geo->DrawArgs["sphere"].StartIndexLocation;
+	sphereRitem->BaseVertexLocation = sphereRitem->Geo->DrawArgs["sphere"].BaseVertexLocation;
+	mAllRitems.push_back(std::move(sphereRitem));
+
 
 	auto hexagonRitem = std::make_unique<RenderItem>();
 	XMStoreFloat4x4(&hexagonRitem->World, XMMatrixScaling(3.0f, 0.1f, 3.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(0.0f, 0.2f, 0.0f));
 	XMStoreFloat4x4(&hexagonRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 	hexagonRitem->ObjCBIndex = 8; //10
-	hexagonRitem->Mat = mMaterials["skullMat"].get();
+	hexagonRitem->Mat = mMaterials["hex"].get();
 	hexagonRitem->Geo = mGeometries["shapeGeo"].get();
 	hexagonRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	hexagonRitem->IndexCount = hexagonRitem->Geo->DrawArgs["hexagon"].IndexCount;
@@ -1023,7 +1063,7 @@ void LitColumnsApp::BuildRenderItems()
 	XMStoreFloat4x4(&triangleEqRitem->World, XMMatrixScaling(2.0f, 2.0f, 15.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(-15.0f, 16.0f, -0.0f));
 	XMStoreFloat4x4(&triangleEqRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 	triangleEqRitem->ObjCBIndex = 9; //10
-	triangleEqRitem->Mat = mMaterials["skullMat"].get();
+	triangleEqRitem->Mat = mMaterials["trianglepurple"].get();
 	triangleEqRitem->Geo = mGeometries["shapeGeo"].get();
 	triangleEqRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	triangleEqRitem->IndexCount = triangleEqRitem->Geo->DrawArgs["triangleEq"].IndexCount;
@@ -1209,7 +1249,7 @@ void LitColumnsApp::BuildRenderItems()
 	XMStoreFloat4x4(&triangleright->World, XMMatrixScaling(2.0f, 2.0f, 15.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(15.0f, 16.0f, -0.0f));
 	XMStoreFloat4x4(&triangleright->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 	triangleright->ObjCBIndex = 24;
-	triangleright->Mat = mMaterials["skullMat"].get();
+	triangleright->Mat = mMaterials["trianglepurple"].get();
 	triangleright->Geo = mGeometries["shapeGeo"].get();
 	triangleright->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	triangleright->IndexCount = triangleright->Geo->DrawArgs["triangleEq"].IndexCount;
@@ -1221,7 +1261,7 @@ void LitColumnsApp::BuildRenderItems()
 	XMStoreFloat4x4(&pyramidFrontLeft->World, XMMatrixScaling(4.0f, 4.0f, 4.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(-15.0f, 18.0f, -15.0f));
 	XMStoreFloat4x4(&pyramidFrontLeft->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 	pyramidFrontLeft->ObjCBIndex = 25;
-	pyramidFrontLeft->Mat = mMaterials["stone0"].get();
+	pyramidFrontLeft->Mat = mMaterials["red"].get();
 	pyramidFrontLeft->Geo = mGeometries["shapeGeo"].get();
 	pyramidFrontLeft->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	pyramidFrontLeft->IndexCount = pyramidFrontLeft->Geo->DrawArgs["pyramid"].IndexCount;
@@ -1233,7 +1273,7 @@ void LitColumnsApp::BuildRenderItems()
 	XMStoreFloat4x4(&pyramidBackLeft->World, XMMatrixScaling(4.0f, 4.0f, 4.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(-15.0f, 18.0f, 15.0f));
 	XMStoreFloat4x4(&pyramidBackLeft->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 	pyramidBackLeft->ObjCBIndex = 26;
-	pyramidBackLeft->Mat = mMaterials["stone0"].get();
+	pyramidBackLeft->Mat = mMaterials["red"].get();
 	pyramidBackLeft->Geo = mGeometries["shapeGeo"].get();
 	pyramidBackLeft->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	pyramidBackLeft->IndexCount = pyramidBackLeft->Geo->DrawArgs["pyramid"].IndexCount;
@@ -1245,7 +1285,7 @@ void LitColumnsApp::BuildRenderItems()
 	XMStoreFloat4x4(&pyramidBackRight->World, XMMatrixScaling(4.0f, 4.0f, 4.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(15.0f, 18.0f, 15.0f));
 	XMStoreFloat4x4(&pyramidBackRight->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 	pyramidBackRight->ObjCBIndex = 27;
-	pyramidBackRight->Mat = mMaterials["stone0"].get();
+	pyramidBackRight->Mat = mMaterials["red"].get();
 	pyramidBackRight->Geo = mGeometries["shapeGeo"].get();
 	pyramidBackRight->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	pyramidBackRight->IndexCount = pyramidBackRight->Geo->DrawArgs["pyramid"].IndexCount;
@@ -1257,7 +1297,7 @@ void LitColumnsApp::BuildRenderItems()
 	XMStoreFloat4x4(&rhomboLitem->World, XMMatrixScaling(1.0f, 1.0f, 1.0f)/* * XMMatrixRotationX(5.1) */* XMMatrixTranslation(-6.7f, 8.0f, -17.0f));
 	XMStoreFloat4x4(&rhomboLitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 	rhomboLitem->ObjCBIndex = 28;
-	rhomboLitem->Mat = mMaterials["stone0"].get();
+	rhomboLitem->Mat = mMaterials["eye0"].get();
 	rhomboLitem->Geo = mGeometries["shapeGeo"].get();
 	rhomboLitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	rhomboLitem->IndexCount = rhomboLitem->Geo->DrawArgs["rhombo"].IndexCount;
@@ -1265,9 +1305,22 @@ void LitColumnsApp::BuildRenderItems()
 	rhomboLitem->BaseVertexLocation = rhomboLitem->Geo->DrawArgs["rhombo"].BaseVertexLocation;
 	mAllRitems.push_back(std::move(rhomboLitem));
 
+	auto prismRitem = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&prismRitem->World, XMMatrixScaling(0.1f, 0.2f, 0.1f)* XMMatrixTranslation(0.0f, 20.0f, 0.0f));
+	XMStoreFloat4x4(&prismRitem->TexTransform, XMMatrixScaling(1.0f, 1.0f, 1.0f));
+	prismRitem->ObjCBIndex = 29; //10
+	prismRitem->Mat = mMaterials["red"].get();
+	prismRitem->Geo = mGeometries["shapeGeo"].get();
+	prismRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	prismRitem->IndexCount = prismRitem->Geo->DrawArgs["prism"].IndexCount;
+	prismRitem->StartIndexLocation = prismRitem->Geo->DrawArgs["prism"].StartIndexLocation;
+	prismRitem->BaseVertexLocation = prismRitem->Geo->DrawArgs["prism"].BaseVertexLocation;
+	mAllRitems.push_back(std::move(prismRitem));
+	
 
 
-	UINT objCBIndex = 28; //increment by 1 per item you add //11
+
+	UINT objCBIndex = 29; //increment by 1 per item you add //11
 
 	/*for(int i = 0; i < 5; ++i)
 	{
